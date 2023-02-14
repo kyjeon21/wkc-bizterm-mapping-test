@@ -1,5 +1,5 @@
 Catalog,DataAsset,ColumnHeader,BusinessTerm,Category,Done
-Test Catalog,CDB_A_DESC,join_sn,차주일련번호,CreDB >> SubCategoryA,N
+Test Catalog,CDB_A_DESC,join_sn,차주일련번호,CreDB >> SubCategoryA,Y
 Test Catalog,CDB_A_DESC,join_sn_typ,차주구분코드,CreDB >> SubCategoryA,N
 Test Catalog,CDB_A_DESC,biz_sn,사업자일련번호,CreDB >> SubCategoryA,N
 Test Catalog,CDB_A_DESC,biz_typ_cd,업종코드,CreDB >> SubCategoryB,N
