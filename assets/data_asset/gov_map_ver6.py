@@ -28,7 +28,7 @@ def save_file(df, file_name):
     # file_path = "/home/wsuser/work/" + file_name
     # with open(file_path, 'rb') as f:
     #     wslib.save_data(asset_name_or_item=file_name, data=f.read(), overwrite=True)
-    # wslib.save_data(file_name, df.to_csv(index=False).encode(),overwrite=True)
+    wslib.save_data(file_name, df.to_csv(index=False).encode(),overwrite=True)
 
 # https://cloud.ibm.com/apidocs/watson-data-api-cpd
 
