@@ -34,7 +34,7 @@ def save_file(df, file_name):
 class WatsonDataAPI:
     def __init__(self):
         self.cpd_cluster_host = 'https://cpd-zen.apps.infra.cp4dex.com'
-        self.project = Project(project_id=os.environ['PROJECT_ID'])       
+        # self.project = Project(project_id=os.environ['PROJECT_ID'])       
         
     def get_artifact_info(self, metadata_name, artifact_type):
         headers = {
@@ -212,7 +212,7 @@ class WatsonDataAPI:
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
-        load_file(map_terms_csv)
+        # load_file(map_terms_csv)
         map_terms = pd.read_csv(map_terms_csv)
         map_terms= map_terms.sort_values(by=['DataAsset']).reset_index(drop=True)
 
@@ -298,8 +298,8 @@ class WatsonDataAPI:
     def get_cpd_cluster_host(self):
         return self.cpd_cluster_host
 
-    def get_project(self):
-        return self.project
+    # def get_project(self):
+    #     return self.project
 
 
 
