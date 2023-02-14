@@ -36,7 +36,7 @@ class WatsonDataAPI:
     def __init__(self):
         self.cpd_cluster_host = 'https://cpd-zen.apps.infra.cp4dex.com'
         # self.project = Project(project_id=os.environ['PROJECT_ID'])       
-        
+
     def get_artifact_info(self, metadata_name, artifact_type):
         headers = {
             'Content-Type': "application/json",
