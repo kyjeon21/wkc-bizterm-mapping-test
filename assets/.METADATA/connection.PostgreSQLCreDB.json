@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "asset_type": "connection",
+    "name": "PostgreSQL CreDB",
+    "origin_country": "us",
+    "rov": {
+      "mode": 0
+    },
+    "resource_key": "0000:0000:0000:0000:0000:FFFF:A93E:CE1A|30276|ibmclouddb",
+    "asset_category": "USER",
+    "created_at": "2023-02-14T08:16:13Z",
+    "created": 1676362573854,
+    "asset_id": "connection.PostgreSQLCreDB",
+    "asset_attributes": [
+      "connection"
+    ]
+  },
+  "entity": {
+    "connection": {
+      "datasource_type": "e1c23729-99d8-4407-b3df-336e33ffdc82",
+      "context": "source,target",
+      "flags": [],
+      "ref_catalog_id": "e5dc6e62-4e4c-4afc-9fb4-a725930a9d41",
+      "ref_asset_id": "73b5e666-6ac4-4d73-b40f-505d4e330624"
+    }
+  },
+  "attachments": []
+}
