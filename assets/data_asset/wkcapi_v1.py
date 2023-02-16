@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+__author__ = "Kiyeon Jeon"
+__copyright__ = 'Copyright 2023, Watson Knowledge Catalog'
+__date__ = "02/16/2023"
+__version__ = "1.0"
+__email__ = "kiyeon.jeon@ibm.com"
+
+
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
