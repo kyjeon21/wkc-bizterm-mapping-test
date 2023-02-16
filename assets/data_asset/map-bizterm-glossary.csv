@@ -1,0 +1,9 @@
+Catalog,DataAsset,ColumnHeader,BusinessTerm,Category
+Test Catalog,CDB_A_DESC,join_sn,차주일련번호,CreDB >> SubCategoryA
+Test Catalog,CDB_A_DESC,join_sn_typ,차주구분코드,CreDB >> SubCategoryA
+Test Catalog,CDB_A_DESC,biz_sn,사업자일련번호,CreDB >> SubCategoryA
+Test Catalog,CDB_A_DESC,biz_typ_cd,업종코드,CreDB >> SubCategoryB
+Test Catalog,CDB_A_ID,join_sn,차주일련번호,CreDB >> SubCategoryA
+Test Catalog,CDB_A_ID,join_sn_typ,차주구분코드,CreDB >> SubCategoryA
+Test Catalog,CDB_A_ID,bth_yr,생년,CreDB >> SubCategoryB
+Test Catalog,CDB_A_ID,gender,성별,CreDB >> SubCategoryB
