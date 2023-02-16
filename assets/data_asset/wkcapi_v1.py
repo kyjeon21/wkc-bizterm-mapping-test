@@ -13,6 +13,8 @@ import json
 import pandas as pd
 import time
 from abc import *
+
+
 class WatsonKnowledgeCatalog(metaclass=ABCMeta):
     def __init__(self, cpd_cluster_host):
         self.cpd_cluster_host = cpd_cluster_host
