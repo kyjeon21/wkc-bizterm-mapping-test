@@ -59,3 +59,5 @@ celerybeat.pid
 .pyre/
 .pytype/
 cython_debug/
+wkc-biz-map-test/
+.DS_STORE
