@@ -43,7 +43,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         catalogs = json.loads(r.text)['catalogs']
 
         catalog_id = None
@@ -88,7 +89,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         rows = json.loads(r.text)['rows']
 
         category_hierarchy = [each.strip() for each in category_path.split('>>')]
@@ -128,7 +130,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         
         res = json.loads(r.text)['results']
         if len(res)>0:
@@ -154,7 +157,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         r_json = json.loads(r.text)
         print(json.dumps(r_json, indent=4))
 
@@ -182,7 +186,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         except requests.exceptions.RequestException as e:
             print('Fail to create attribute')
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
     def get_attribute(self, asset_name, catalog_name):
         catalog_id = self.get_catalog_id(catalog_name)
         asset_id = self.get_asset_id(asset_name, catalog_name)
@@ -201,7 +206,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         except requests.exceptions.RequestException as e:
             print('Fail to get attribute')
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         r_json = json.loads(r.text)
         print(json.dumps(r_json, indent=4))
             
@@ -223,7 +229,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         except requests.exceptions.RequestException as e:
             print('Fail to delete attribute')
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
     def get_bizterm_id(self, bizterm, category_path):
         category_id = self.get_category_id(category_path)
         if category_id is None:
@@ -272,7 +279,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         bizterm_id = None
         if len(json.loads(r.text)["rows"])>0:
             for row in json.loads(r.text)["rows"]:
@@ -323,7 +331,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         except requests.exceptions.RequestException as e:
             print('Fail to delete attribute')
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
     
     def map_bizterm(self, map_bizterm_csv='map-bizterm-glossary.csv'):
         df = pd.read_csv(map_bizterm_csv)
@@ -348,7 +357,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         print('='*100)
 
     def map_bizterm_allatonce(self, map_bizterm_csv='map-bizterm-glossary.csv'):
-        s = requests.session()
+        
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
@@ -357,6 +366,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         df = pd.read_csv(map_bizterm_csv)
         start = time.time()
         for (catalog_name, asset_name), rows in df.groupby(['Catalog','DataAsset']):
+            s = requests.session()
             catalog_id = self.get_catalog_id(catalog_name)
             asset_id = self.get_asset_id(asset_name, catalog_name)
             payload = dict()
@@ -381,7 +391,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             except requests.exceptions.RequestException as e:
                 print('Fail to create attribute')
                 raise SystemExit(e)
-        s.close()
+            finally:
+                s.close()
         end = time.time()
         elapsed_time = end - start
         print('='*100)
@@ -408,7 +419,8 @@ class MapTermsJSON(WatsonKnowledgeCatalog):
             token=json.loads(r.text)['token']
         except requests.exceptions.RequestException as e:  # This is the correct syntax
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         return token
     
         
@@ -436,7 +448,8 @@ class MapTermsInput(WatsonKnowledgeCatalog):
             token=json.loads(r.text)['token']
         except requests.exceptions.RequestException as e:  
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         return token
     
 
@@ -457,5 +470,6 @@ class MapTermsJob(WatsonKnowledgeCatalog):
             token=json.loads(r.text)['token']
         except requests.exceptions.RequestException as e:  
             raise SystemExit(e)
-        s.close()
+        finally:
+            s.close()
         return token
