@@ -12,12 +12,22 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import json
 import pandas as pd
 import time
+import logging
 from abc import *
+
+import logging
+logger = logging.getLogger('API Error Log')
+logger.setLevel(logging.ERROR)
+handler = logging.FileHandler('error.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 class WatsonKnowledgeCatalog(metaclass=ABCMeta):
-    def __init__(self, cpd_cluster_host):
+    def __init__(self, cpd_cluster_host, logger=logger):
         self.cpd_cluster_host = cpd_cluster_host
+        self.logger=logger
         self.token = None
         self.metadata = {
             "catalog2id":{},
@@ -42,6 +52,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 headers=headers
             )
         except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -88,6 +99,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 headers=headers
             )
         except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -129,6 +141,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 headers=headers
             )
         except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -156,6 +169,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 headers=headers
             )
         except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -185,6 +199,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             print('Fail to create attribute')
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -205,6 +220,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             print('Fail to get attribute')
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -228,6 +244,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             )
         except requests.exceptions.RequestException as e:
             print('Fail to delete attribute')
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -278,6 +295,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 verify=False
             )
         except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -329,7 +347,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 verify=False
             )
         except requests.exceptions.RequestException as e:
-            print('Fail to delete attribute')
+            print('Fail to update attribute')
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -390,6 +409,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 )
             except requests.exceptions.RequestException as e:
                 print('Fail to create attribute')
+                self.logger.error(str(e))
                 raise SystemExit(e)
             finally:
                 s.close()
@@ -420,13 +440,14 @@ class MapTermsJSON(WatsonKnowledgeCatalog):
         except requests.exceptions.RequestException as e:  # This is the correct syntax
             raise SystemExit(e)
         finally:
+            self.logger.error('This is an TEST message')
             s.close()
         return token
     
         
 class MapTermsInput(WatsonKnowledgeCatalog):
-    def __init__(self, cpd_cluster_host):
-        super().__init__(cpd_cluster_host)
+    def __init__(self, cpd_cluster_host,logger=logger):
+        super().__init__(cpd_cluster_host,logger)
         self.token = self.get_token()
     def get_token(self):
         def user_input():
@@ -446,7 +467,8 @@ class MapTermsInput(WatsonKnowledgeCatalog):
         try:
             r = s.post(f'{self.cpd_cluster_host}/icp4d-api/v1/authorize', headers=headers, data=payload, verify=False)
             token=json.loads(r.text)['token']
-        except requests.exceptions.RequestException as e:  
+        except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
@@ -454,8 +476,8 @@ class MapTermsInput(WatsonKnowledgeCatalog):
     
 
 class MapTermsJob(WatsonKnowledgeCatalog):
-    def __init__(self, cpd_cluster_host, username, password, filename):
-        super().__init__(cpd_cluster_host)
+    def __init__(self, cpd_cluster_host, username, password, filename, logger=logger):
+        super().__init__(cpd_cluster_host,logger)
         self.token = self.get_token(username, pasword)
     def get_token(self, username, password):
         s = requests.session()
@@ -468,7 +490,8 @@ class MapTermsJob(WatsonKnowledgeCatalog):
         try:
             r = s.post(f'{self.cpd_cluster_host}/icp4d-api/v1/authorize', headers=headers, data=payload, verify=False)
             token=json.loads(r.text)['token']
-        except requests.exceptions.RequestException as e:  
+        except requests.exceptions.RequestException as e:
+            self.logger.error(str(e))
             raise SystemExit(e)
         finally:
             s.close()
