@@ -6,10 +6,10 @@
     "rov": {
       "mode": 0
     },
-    "resource_key": "0000:0000:0000:0000:0000:FFFF:A93E:CE1A|30276|ibmclouddb",
+    "resource_key": "0000:0000:0000:0000:0000:FFFF:A93D:BE64|30276|ibmclouddb",
     "asset_category": "USER",
-    "created_at": "2023-02-14T08:16:13Z",
-    "created": 1676362573854,
+    "created_at": "2023-02-21T19:10:08Z",
+    "created": 1677006608627,
     "asset_id": "connection.PostgreSQLCreDB",
     "asset_attributes": [
       "connection"
@@ -17,11 +17,11 @@
   },
   "entity": {
     "connection": {
-      "datasource_type": "e1c23729-99d8-4407-b3df-336e33ffdc82",
+      "datasource_type": "048ed1bf-516c-46f0-ae90-fa3349d8bc1c",
       "context": "source,target",
       "flags": [],
-      "ref_catalog_id": "e5dc6e62-4e4c-4afc-9fb4-a725930a9d41",
-      "ref_asset_id": "73b5e666-6ac4-4d73-b40f-505d4e330624"
+      "ref_catalog_id": "d2db6039-4ef7-4c52-8745-a0f88dfc5ad9",
+      "ref_asset_id": "91815e26-ddc9-4e7b-a783-f6eb109589bb"
     }
   },
   "attachments": []

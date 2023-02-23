@@ -2,19 +2,20 @@
 __author__ = "Kiyeon Jeon"
 __copyright__ = 'Copyright 2023, Watson Knowledge Catalog'
 __date__ = "02/16/2023"
-__version__ = "1.0"
+__version__ = "1.1"
 __email__ = "kiyeon.jeon@ibm.com"
 
 
 import requests
+from requests.adapters import HTTPAdapter, Retry
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import json
 import pandas as pd
+from pandas import json_normalize
 import time
 import logging
 from abc import *
-
 import logging
 logger = logging.getLogger('API Error Log')
 logger.setLevel(logging.ERROR)
@@ -22,6 +23,22 @@ handler = logging.FileHandler('error.log')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
+DEFAULT_TIMEOUT = 0.5
+
+
+class TimeoutHTTPAdapter(HTTPAdapter):
+    def __init__(self, *args, **kwargs):
+        self.timeout = DEFAULT_TIMEOUT
+        if "timeout" in kwargs:
+            self.timeout = kwargs["timeout"]
+            del kwargs["timeout"]
+        super().__init__(*args, **kwargs)
+    def send(self, request, **kwargs):
+        timeout = kwargs.get("timeout")
+        if timeout is None:
+            kwargs["timeout"] = self.timeout
+        return super().send(request, **kwargs)
 
 
 class WatsonKnowledgeCatalog(metaclass=ABCMeta):
@@ -32,6 +49,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         self.metadata = {
             "catalog2id":{},
             "category2id":{},
+            "categorypath2biztermdict":{},
         }
     @abstractmethod
     def get_token(self):
@@ -41,10 +59,13 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         if catalog_name in self.metadata['catalog2id'].keys():
             return self.metadata['catalog2id'][catalog_name]
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
+        print(f"getting catalog id of {catalog_name}.. ")
         try:
             r = s.get(
                 f"{self.cpd_cluster_host}/v2/catalogs", 
@@ -73,11 +94,13 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         if category_path in self.metadata['category2id'].keys():
             return self.metadata['category2id'][category_path]
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry,timeout=10))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token,
             'Cache-Control': "no-cache",
-            'Connection': "keep-alive"
+            # 'Connection': "keep-alive"
         }
         payload = {
             "_source": ["artifact_id","metadata.name","categories"],
@@ -91,6 +114,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 }
             }
         }
+        print(f"searching category id of {category_path}.. ")
         try:
             r = s.post(
                 f"{self.cpd_cluster_host}/v3/search",
@@ -126,6 +150,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         if catalog_id is None:
             return None
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry,timeout=10))
         search_body={
             "query": f"asset.name:{asset_name}"
         }
@@ -133,6 +159,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
+        print(f"searching asset id of {asset_name} in {catalog_name}.. ")
         try:
             r = s.post(
                 f"{self.cpd_cluster_host}/v2/asset_types/asset/search?catalog_id="+catalog_id,
@@ -145,23 +172,27 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             raise SystemExit(e)
         finally:
             s.close()
-        
-        res = json.loads(r.text)['results']
-        if len(res)>0:
-            asset_id = json.loads(r.text)['results'][0]['metadata']['asset_id']
-        else:
+        results = json.loads(r.text)['results']
+        asset_id = None
+        for result in results:
+            if result['metadata']['name']==asset_name:
+                asset_id= result['metadata']['asset_id']
+                break
+        if asset_id is None:
             print(f"The provided asset name ({asset_name}) does not exist in catalog name ({catalog_name})!")
-            asset_id = None
         return asset_id
-    def get_asset_info(self, asset_name, catalog_name):
+    def view_asset_info(self, asset_name, catalog_name):
         catalog_id = self.get_catalog_id(catalog_name)
         asset_id = self.get_asset_id(asset_name, catalog_name)
         
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
+        print(f"getting asset info of {asset_name} in {catalog_name}.. ")
         try:
             r = s.get(
                 f"{self.cpd_cluster_host}/v2/assets/{asset_id}?catalog_id={catalog_id}", 
@@ -181,6 +212,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         asset_id = self.get_asset_id(asset_name, catalog_name)
         
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
@@ -190,6 +223,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             "entity":{
             }
         }
+        print(f"creating column_info attribute of {asset_name} in {catalog_name}.. ")
         try: 
             r=s.post(
                 f"{self.cpd_cluster_host}/v2/assets/{asset_id}/attributes?catalog_id={catalog_id}",
@@ -203,15 +237,18 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             raise SystemExit(e)
         finally:
             s.close()
-    def get_attribute(self, asset_name, catalog_name):
+    def view_attribute(self, asset_name, catalog_name):
         catalog_id = self.get_catalog_id(catalog_name)
         asset_id = self.get_asset_id(asset_name, catalog_name)
         
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
+        print(f"getting column_info attribute of {asset_name} in {catalog_name}.. ")
         try: 
             r=s.get(
                 f"{self.cpd_cluster_host}/v2/assets/{asset_id}/attributes/column_info?catalog_id={catalog_id}",
@@ -232,10 +269,13 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         asset_id = self.get_asset_id(asset_name, catalog_name)
         
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
         }
+        print(f"deleting column_info attribute of {asset_name} in {catalog_name}.. ")
         try: 
             r=s.delete(
                 f"{self.cpd_cluster_host}/v2/assets/{asset_id}/attributes/column_info?catalog_id={catalog_id}",
@@ -249,15 +289,23 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         finally:
             s.close()
     def get_bizterm_id(self, bizterm, category_path):
+        if category_path in self.metadata['categorypath2biztermdict'].keys():
+            if bizterm not in self.metadata['categorypath2biztermdict'][category_path].keys():
+                print(f"The provided business term ({bizterm}) does not exist!")
+                return None
+            return self.metadata['categorypath2biztermdict'][category_path][bizterm]
+
         category_id = self.get_category_id(category_path)
         if category_id is None:
             return None
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry, timeout=10))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token,
             'Cache-Control': "no-cache",
-            'Connection': "keep-alive"
+            # 'Connection': "keep-alive"
         }
 
         payload={
@@ -274,8 +322,10 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 "bool": {
                     "filter": {
                         "bool": {
+                            # "minimum_should_match":1,
                             "should": [
-                                {"match": {"metadata.name": bizterm}}
+                                # {"match": {"metadata.name": bizterm}},
+                                {"term":{"categories.primary_category_id":category_id}}
                             ],
                             "must_not": {
                                 "terms": {
@@ -287,6 +337,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 }
             }
         }
+        print(f"searching business terms in {category_path}.. ")
         try:
             r = s.post(
                 f"{self.cpd_cluster_host}/v3/search",
@@ -299,19 +350,29 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             raise SystemExit(e)
         finally:
             s.close()
+        df = json_normalize(json.loads(r.text)["rows"])
+        bizterm2id = dict(zip(df['metadata.name'], df['artifact_id']))
+        self.metadata['categorypath2biztermdict'][category_path] = bizterm2id
+
         bizterm_id = None
-        if len(json.loads(r.text)["rows"])>0:
-            for row in json.loads(r.text)["rows"]:
-                if row['metadata']['name']==bizterm: 
-                    bizterm_id = json.loads(r.text)["rows"][0]["artifact_id"]
+        if len(bizterm2id)>0:
+            for key, val in bizterm2id.items():
+                if key==bizterm:
+                    bizterm_id = val
                     break
         if bizterm_id is None:
             print(f"The provided business term ({bizterm}) does not exist!")
         return bizterm_id
-        
-        
-        
-        
+
+        # if len(json.loads(r.text)["rows"])>0:
+        #     for row in json.loads(r.text)["rows"]:
+        #         if row['metadata']['name']==bizterm: 
+        #             bizterm_id = row["artifact_id"]
+        #             self.metadata['categorypath2biztermsdf'][category_path] = bizterm_id
+        #             break
+        # if bizterm_id is None:
+        #     print(f"The provided business term ({bizterm}) does not exist!")
+        # return bizterm_id
         
     def update_attribute(self, asset_name, catalog_name,column_name, bizterm, category_path):
         catalog_id = self.get_catalog_id(catalog_name)
@@ -321,6 +382,8 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
             return
         
         s = requests.session()
+        retry = Retry(total=15,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry,timeout=15))
         headers = {
             'Content-Type': "application/json",
             'Authorization': "Bearer "+self.token
@@ -339,6 +402,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                 }
             }
         ]
+        print(f"updating column_info attribute of {column_name} of {asset_name} in {catalog_name} with {bizterm} in {category_path}.. ")
         try: 
             r=s.patch(
                 f"{self.cpd_cluster_host}/v2/assets/{asset_id}/attributes/column_info?catalog_id={catalog_id}",
@@ -358,15 +422,17 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         start = time.time()
 
         df_attribute = df[['Catalog', 'DataAsset']].drop_duplicates(ignore_index=True)
-        print(f"1. Creating attribute..")
         print('='*100)
+        print(f"1. Creating attribute..")
         for idx, row in df_attribute.iterrows():
+            print('-'*100)
             print(f"{idx}-{row.DataAsset} of {row.Catalog}..")
             self.create_attribute(row.DataAsset, row.Catalog)
-        print('='*100)
+        print('='*100)            
         print(f"2. Patching column info attribute into data asset in catalogs..")
-        print('='*100)
+
         for idx, row in df.iterrows():
+            print('-'*100)
             print(f"{idx}-{row.BusinessTerm} is mapped to {row.ColumnHeader} in {row.DataAsset} of {row.Catalog}..")
             self.update_attribute(row.DataAsset, row.Catalog, row.ColumnHeader, row.BusinessTerm, row.Category)
         end = time.time()
@@ -384,8 +450,13 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         
         df = pd.read_csv(map_bizterm_csv)
         start = time.time()
-        for (catalog_name, asset_name), rows in df.groupby(['Catalog','DataAsset']):
+        for idx,((catalog_name, asset_name), rows) in enumerate(df.groupby(['Catalog','DataAsset'])):
+            print('='*100)
+            print(f"{idx}-Creating and patching attribute on {asset_name} of {catalog_name}..")
+            print('='*100)
             s = requests.session()
+            retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+            s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
             catalog_id = self.get_catalog_id(catalog_name)
             asset_id = self.get_asset_id(asset_name, catalog_name)
             payload = dict()
@@ -398,8 +469,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
                     {
                         'term_display_name': row.BusinessTerm, 'term_id': bizterm_id
                     }
-                ]
-            print(f"Creating and patching attribute on {asset_name} of {catalog_name}..")
+                ]            
             try: 
                 r=s.post(
                     f"{self.cpd_cluster_host}/v2/assets/{asset_id}/attributes?catalog_id={catalog_id}",
@@ -416,7 +486,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         end = time.time()
         elapsed_time = end - start
         print('='*100)
-        print(f"it takes {elapsed_time} seconds / ({elapsed_time/len(df)} sec per column)")
+        print(f"it takes {elapsed_time} seconds / ({elapsed_time/len(df)} sec per asset)")
         
 
 class MapTermsJSON(WatsonKnowledgeCatalog):
@@ -427,6 +497,8 @@ class MapTermsJSON(WatsonKnowledgeCatalog):
                 
     def get_token(self, info_json):
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         info = json.load(open(info_json))
         headers = {
             'cache-control': 'no-cache',
@@ -458,6 +530,8 @@ class MapTermsInput(WatsonKnowledgeCatalog):
         username, password = user_input()
 
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'cache-control': 'no-cache',
             'content-type': 'application/json'
@@ -481,6 +555,8 @@ class MapTermsJob(WatsonKnowledgeCatalog):
         self.token = self.get_token(username, pasword)
     def get_token(self, username, password):
         s = requests.session()
+        retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
+        s.mount('https://',TimeoutHTTPAdapter(max_retries=retry))
         headers = {
             'cache-control': 'no-cache',
             'content-type': 'application/json'
