@@ -524,8 +524,8 @@ class MapTermsInput(WatsonKnowledgeCatalog):
     def get_token(self):
         def user_input():
             from getpass import getpass
-            username = input("1) ID를 입력하세요:")
-            password = getpass("2) 비밀번호: ")
+            username = input("1) Please enter your ID:")
+            password = getpass("2) Password: ")
             return username, password
         username, password = user_input()
 
