@@ -2,10 +2,25 @@
 
 When customers apply their governance system to Cloud Pak for Data, there is a limit to performing Metadata Enrichment(MDE) for all of the numerous business terms in the initial setup. To address these limitations, we used the Watson Data API to create custom code for mapping business terms to each asset in the catalogs.
 
+- Functions [source code](./assets/data_asset/wkcapi_v1.py)
+    get_catalog_id(catalog_name) : get catalog id of a given catalog name
+    get_category_id(category_path) : get category id of a given category path (ex. Parent Category >> Sub Category A)
+    get_asset_id(asset_name, catalog_name) : get asset id of a given asset name in a given catalog name
+    view_asset_info(asset_name, catalog_name) : print metadata information of a given asset name in a given catalog name
+    create_attribute(asset_name, catalog_name) : create column_info attribute in a given asset name of a given catalog name 
+    view_attribute(asset_name, catalog_name) : print column_info attribute in a given asset name of a given catalog name
+    delete_attribute(asset_name, catalog_name): delete column_info attribute in a given asset name of a given catalog name
+    update_attribute(asset_name, catalog_name,column_name,bizterm_name, category_path) : patch column_info attribute with business term name and id corresponding to a given column
+    get_bizterm_id(bizterm_name, category_path) : get business term id of a given business term name in a given category path 
+    map_bizterm(map_bizterm_csv): patch column info attribute with a business term on each column in all the assets given in a given csv file
+    map_bizterm_allatonce(map_bizterm_csv): create column info attribute including all the business terms of each asset name in a given csv file
+    
 - Demo
-  [See Notebook](./assets/data_asset/test_class_TypeA.ipynb)
+    [See Notebook](./assets/data_asset/test_class_TypeA.ipynb)
 - Result
   ![image1](./assets/docs/term_map_activity.png)
   ![image2](./assets/docs/term_map_activity_detail.png)
   ![image3](./assets/docs/term_map_res1.png)
   ![image4](./assets/docs/term_map_res2.png)
+  
+- Limitation
