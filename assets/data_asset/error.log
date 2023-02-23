@@ -1,0 +1,15 @@
+2023-02-23 07:00:11,154 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:04:12,190 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:05:37,618 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:06:07,035 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:06:10,613 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:06:37,146 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:07:25,987 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:07:38,030 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:07:47,602 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:08:03,405 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:08:08,100 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:09:19,129 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:09:33,020 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)
+2023-02-23 07:09:51,179 - API Error Log - ERROR - This is an TEST message
+2023-02-23 07:09:59,600 - API Error Log - ERROR - HTTPSConnectionPool(host='cpd-cpd-instance-1.itzroks-661002et7b-l3aou9-4b4a324f027aea19c5cbc0c3275c4656-0000.us-south.containers.appdomain.cloud', port=443): Read timed out. (read timeout=0.5)

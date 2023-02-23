@@ -512,7 +512,7 @@ class MapTermsJSON(WatsonKnowledgeCatalog):
         except requests.exceptions.RequestException as e:  # This is the correct syntax
             raise SystemExit(e)
         finally:
-            self.logger.error('This is an TEST message')
+            self.logger.error(str(e))
             s.close()
         return token
     

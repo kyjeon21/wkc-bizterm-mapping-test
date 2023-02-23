@@ -1,7 +1,7 @@
 # WKCOpsAsset
 
 When customers apply their governance system to Cloud Pak for Data, there is a limit to performing Metadata Enrichment(MDE) for all of the numerous business terms in the initial setup. To address these limitations, we used the Watson Data API to create custom code for mapping business terms to each asset in the catalogs.
-    
+
 - Demo
 
     [See Notebook](./assets/data_asset/test_class_TypeA.ipynb)
@@ -15,6 +15,16 @@ When customers apply their governance system to Cloud Pak for Data, there is a l
     ![image3](./assets/docs/term_map_res1.png)
   
     ![image4](./assets/docs/term_map_res2.png)
+    
+- Performance
+
+    It was tested in an environment with about 1,000 business terms, and it was confirmed that it took about 1 second for each asset. Considering the 50 assets per catalog for 20 catalogs, it is expected to take approximately 1000 seconds (16.6 minutes) to map business term to all the catalogs.
+    
+- Debug
+
+    + There is a process of finding the category ids and business term ids through elasticsearch in the code, so the time required for API requests may vary depending on the size and system of the governance. Depending on the situation, you may need to change the timeout and retry parameters in the [code](./assets/data_asset/wkcapi_v1.py).
+    + An error log is created for each exception situation, so you can see the [error.log](./assets/data_asset/error.log) and understand what the problem is.
+    
   
 - Limitation
     1. It is not possible to distinguish between assets with the same name in the catalog.
