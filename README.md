@@ -13,7 +13,7 @@
 
 * 함수별 테스트 노트북 - [notebook](./assets/data_asset/map_bizterm.ipynb)
 
-* Watson Data API 기반 클래스 - [code](./assets/data_asset/wkcap_1.py)
+* Watson Data API 기반 클래스 - [code](./assets/data_asset/wkcapi_1.py)
  
 
 **코드 설명**
