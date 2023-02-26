@@ -5,6 +5,7 @@
 초기셋업으로써 Cloud Pak for Data에 미리 만들어둔 거버넌스 체계를 입힐 때, Metadata Enrichment를 통해 비지니스 용어들을 모든 데이터 에셋에 붙이는 작업은 반복적이고 시간이 많이 든다. 이러한 한계점을 극복하기 위해 [Watson Data API](https://cloud.ibm.com/apidocs/watson-data-api-cpd)를 이용하여 카탈로그의 에셋들에 비지니스 용어를 붙이는 커스텀 코드를 만들었다. 
 
 
+
 **데모**
 
 * JSON 파일 기반 비지니스 용어 매핑 - [notebook](./assets/data_asset/test_class_TypeA.ipynb)
@@ -16,11 +17,17 @@
 * Watson Data API 기반 클래스 - [code](./assets/data_asset/wkcapi_v1.py)
  
 
-**코드 설명**
+**데모 설명**
 
 용어 매핑을 위해 다음의 절차들이 필요하다.
 
-1. 프로젝트의 파일들을 런타임에 다운로드
+1. 파일 준비
+
+    CP4D 내 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 비즈니스텀과 에셋의 칼럼에 맞게 작성하여 올리고 csv파일의 컬럼 이름 및 순서는 반드시 지켜야 한다.
+
+
+
+2. 프로젝트의 파일들을 런타임에 다운로드
 
     ```Python
     from ibm_watson_studio_lib import access_project_or_space
@@ -28,7 +35,7 @@
     wslib.download_file('<file_name>')
     ```
 
-2. 클래스 인스턴스 만들어 username/password 기반 토큰 발행
+3. 클래스 인스턴스 만들어 username/password 기반 토큰 발행
 
     A) Json 파일로 username/password를 받아 사용할 경우 
 
@@ -49,17 +56,17 @@
     )
     ```
 
-3. 비지니스 용어 일괄 매핑
+4. 비지니스 용어 일괄 매핑
     ```Python
     wkc.map_bizterm_allatonce('<bizterm-glossary_csv_file>')
     ```
 
-4. 비지니스 용어 매핑 확인
+5. 비지니스 용어 매핑 확인
     ```Python
     wkc.view_attribute('<asset_name>','<catalog_name>')
     ```
 
-5. 비지니스 용어 매핑 삭제
+6. 비지니스 용어 매핑 삭제
     ```Python
     wkc.delete_attribute('<asset_name>','<catalog_name>')
     ```
