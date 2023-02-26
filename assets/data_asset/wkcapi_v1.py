@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 __author__ = "Kiyeon Jeon"
 __copyright__ = 'Copyright 2023, Watson Knowledge Catalog'
-__date__ = "02/16/2023"
-__version__ = "1.1"
+__date__ = "02/26/2023"
+__version__ = "1.2"
 __email__ = "kiyeon.jeon@ibm.com"
 
 
@@ -153,7 +153,7 @@ class WatsonKnowledgeCatalog(metaclass=ABCMeta):
         retry = Retry(total=10,backoff_factor=0.5,status_forcelist=[500,504])
         s.mount('https://',TimeoutHTTPAdapter(max_retries=retry,timeout=10))
         search_body={
-            "query": f"asset.name:{asset_name}"
+            "query": "*:*"
         }
         headers = {
             'Content-Type': "application/json",

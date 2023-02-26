@@ -1,12 +1,15 @@
-# WKCOpsAsset
+# 비지니스 용어 일괄 매핑 (Watson Knowledge Governance)
 
-When customers apply their governance system to Cloud Pak for Data, there is a limit to performing Metadata Enrichment(MDE) for all of the numerous business terms in the initial setup. To address these limitations, we used the [Watson Data API](https://cloud.ibm.com/apidocs/watson-data-api-cpd) to create custom code for mapping business terms to each asset in the catalogs.
+- 개괄
 
-- Demo
+초기셋업으로써 Cloud Pak for Data에 미리 만들어둔 거버넌스 체계를 입힐 때, Metadata Enrichment를 통해 비지니스 용어들을 모든 데이터 에셋에 붙이는 작업은 반복적이고 시간이 많이 든다. 이러한 한계점을 해결하기 위해 [Watson Data API](https://cloud.ibm.com/apidocs/watson-data-api-cpd)를 이용하여 카탈로그의 에셋들에 비지니스 용어를 붙이는 커스텀 코드를 만들었다. 
+
+
+- 데모
 
     [See Notebook](./assets/data_asset/test_class_TypeA.ipynb)
     
-- Result
+- 결과
 
     ![image1](./assets/docs/term_map_activity.png)
   
@@ -16,23 +19,23 @@ When customers apply their governance system to Cloud Pak for Data, there is a l
   
     ![image4](./assets/docs/term_map_res2.png)
     
-- Performance
+- 성능
 
     It was tested in an environment with about 1,000 business terms, and it was confirmed that it took about 1 second for each asset. Considering the 50 assets per catalog for 20 catalogs, it is expected to take approximately 1000 seconds (16.6 minutes) to map business term to all the catalogs.
     
-- Debug
+- 디버깅
 
     + There is a process of finding the category ids and business term ids through elasticsearch in the code, so the time required for API requests may vary depending on the size and system of the governance. Depending on the situation, you may need to change the timeout and retry parameters in the [code](./assets/data_asset/wkcapi_v1.py).
     + An error log is created for each exception situation, so you can see the [error.log](./assets/data_asset/error.log) and understand what the problem is.
     
   
-- Limitation
+- 한계점
     1. It is not possible to distinguish between assets with the same name in the catalog.
     
     2. It is not possible to distinguish between categories with somewhat identical cateogy paths. This is because the cateogry metadata contains only the parent category information. More work is needed to distinguish them. I will force customers not to use this category structure. ex) ParentA >> SubCategory1 >> SubCategory 2 vs. ParentB >> SubCategory1 >> SubCategory2) 
     
 
-- Reference 
+- 참조 
 
     The following are the functions implemented [source code](./assets/data_asset/wkcapi_v1.py)
 
