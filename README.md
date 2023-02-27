@@ -42,7 +42,7 @@
 
     B) 클래스 인스턴스 만들어 username/password 기반 토큰 발행
 
-        * Json 파일로 username/password를 받아 사용할 경우 
+        Json 파일로 username/password를 받아 사용할 경우 
 
         ```Python
         from wkcapi_v1 import MapTermsJSON
@@ -52,7 +52,7 @@
         )
         ```
 
-        * 키보드 인풋으로 username/password를 받을 경우
+        키보드 인풋으로 username/password를 받을 경우
 
         ```Python
         from wkcapi_v1 import MapTermsInput
@@ -62,16 +62,19 @@
         ```
 
     C) 비지니스 용어 일괄 매핑
+    
         ```Python
         wkc.map_bizterm_allatonce('<bizterm-glossary_csv_file>')
         ```
 
     D) 비지니스 용어 매핑 확인
+    
         ```Python
         wkc.view_attribute('<asset_name>','<catalog_name>')
         ```
 
     E) 비지니스 용어 매핑 삭제
+    
         ```Python
         wkc.delete_attribute('<asset_name>','<catalog_name>')
         ```
