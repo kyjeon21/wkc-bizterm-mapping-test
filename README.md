@@ -22,17 +22,18 @@
 용어 매핑을 위해 다음의 절차들이 필요하다.
 
 1. 준비 단계
-    A) 프로젝트 및 카탈로그 생성한다.
 
-    B) CP4D에 카테고리 및 비지니스 용어 정의한다.
+    1. 프로젝트 및 카탈로그 생성한다.
+
+    2. CP4D에 카테고리 및 비지니스 용어 정의한다.
     
-    C) 카탈로그에 작업할 커넥션 가져오고 커넥션 내 사용할 테이블들을 임포트한다.
+    3. 카탈로그에 작업할 커넥션 가져오고 커넥션 내 사용할 테이블들을 임포트한다.
     
-    D) 앞서 생성한 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 에셋의 칼럼과 매핑할 비지니스 용어를 올바르게 작성하여 올리고 csv파일의 컬럼명 및 순서는 반드시 지켜야 하며 csv파일의 타겟 에셋들은 카탈로그에 임포트되어 있어야 한다.
+    4. 앞서 생성한 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 에셋의 칼럼과 매핑할 비지니스 용어를 올바르게 작성하여 올리고 csv파일의 컬럼명 및 순서는 반드시 지켜야 하며 csv파일의 타겟 에셋들은 카탈로그에 임포트되어 있어야 한다.
 
 2. 개발 단계
 
-    A) 프로젝트의 파일들을 런타임에 다운로드
+    1. 프로젝트의 파일들을 런타임에 다운로드
         
         ```Python
         from ibm_watson_studio_lib import access_project_or_space
@@ -40,7 +41,7 @@
         wslib.download_file('<file_name>')
         ```
 
-    B) 클래스 인스턴스 만들어 username/password 기반 토큰 발행
+    2. 클래스 인스턴스 만들어 username/password 기반 토큰 발행
 
         Json 파일로 username/password를 받아 사용할 경우 
 
@@ -61,19 +62,19 @@
         )
         ```
 
-    C) 비지니스 용어 일괄 매핑
+    3. 비지니스 용어 일괄 매핑
     
         ```Python
         wkc.map_bizterm_allatonce('<bizterm-glossary_csv_file>')
         ```
 
-    D) 비지니스 용어 매핑 확인
+    4. 비지니스 용어 매핑 확인
     
         ```Python
         wkc.view_attribute('<asset_name>','<catalog_name>')
         ```
 
-    E) 비지니스 용어 매핑 삭제
+    5. 비지니스 용어 매핑 삭제
     
         ```Python
         wkc.delete_attribute('<asset_name>','<catalog_name>')
