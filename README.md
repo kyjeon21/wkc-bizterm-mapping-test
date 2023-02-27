@@ -27,7 +27,7 @@
     
     B) CP4D의 작업 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 비즈니스텀과 에셋의 칼럼에 맞게 작성하여 올리고 csv파일의 컬럼 이름 및 순서는 반드시 지켜야 한다. 
     
-    C) csv파일의 타겟 에셋들은 카탈로그에 임포트 되어있어야 한다.
+    C) csv파일의 타겟 에셋들은 카탈로그에 임포트되어 있어야 한다.
 
 
 
