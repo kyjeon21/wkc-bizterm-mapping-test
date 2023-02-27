@@ -21,9 +21,13 @@
 
 용어 매핑을 위해 다음의 절차들이 필요하다.
 
-1. 파일 준비
+1. 거버넌스 정의 및 파일 준비
 
-    CP4D 내 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 비즈니스텀과 에셋의 칼럼에 맞게 작성하여 올리고 csv파일의 컬럼 이름 및 순서는 반드시 지켜야 한다.
+    A) CP4D에 카테고리 및 비지니스 용어들이 정의되어 있어야한다.
+    
+    B) CP4D의 작업 프로젝트에 [wkcapi_v1.py](./assets/data_asset/wkcapi_v1.py)와 [map-bizterm-glossary.csv](./assets/data_asset/map-bizterm-glossary.csv)를 업로드한다. `map-bizterm-glossary.csv`의 경우 비즈니스텀과 에셋의 칼럼에 맞게 작성하여 올리고 csv파일의 컬럼 이름 및 순서는 반드시 지켜야 한다. 
+    
+    C) csv파일의 타겟 에셋들은 카탈로그에 임포트 되어있어야 한다.
 
 
 
