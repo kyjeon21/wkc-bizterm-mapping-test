@@ -33,12 +33,12 @@
 2. 개발 단계
 
     A) 프로젝트의 파일들을 런타임에 다운로드
-
-       ```Python
-       from ibm_watson_studio_lib import access_project_or_space
-       wslib = access_project_or_space()
-       wslib.download_file('<file_name>')
-       ```
+        
+        ```Python
+        from ibm_watson_studio_lib import access_project_or_space
+        wslib = access_project_or_space()
+        wslib.download_file('<file_name>')
+        ```
 
     B) 클래스 인스턴스 만들어 username/password 기반 토큰 발행
 
